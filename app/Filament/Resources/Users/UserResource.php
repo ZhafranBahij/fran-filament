@@ -10,6 +10,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -72,7 +75,19 @@ class UserResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
+                ExportAction::make()
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromModel()
+                            ->withFilename(fn () => 'users-' . date('Y-m-d')),
+                    ]),
                 BulkActionGroup::make([
+                    ExportBulkAction::make()
+                        ->exports([
+                            ExcelExport::make()
+                                ->fromModel()
+                                ->withFilename(fn () => 'users-' . date('Y-m-d')),
+                        ]),
                     DeleteBulkAction::make(),
                 ]),
             ]);
