@@ -18,6 +18,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 class UserResource extends Resource
 {
@@ -44,6 +47,14 @@ class UserResource extends Resource
                     ->maxLength(255)
                     ->dehydrateStateUsing(fn ($state) => bcrypt($state))
                     ->visibleOn('create'),
+                Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
+                SpatieMediaLibraryFileUpload::make('media')
+                    ->collection('avatars')
+                    ->avatar(),
             ]);
     }
 
@@ -54,6 +65,8 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->sortable(),
+                SpatieMediaLibraryImageColumn::make('media')->collection('avatars'),
+                TextColumn::make('roles.name')->badge(),
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
